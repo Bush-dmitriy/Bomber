@@ -28,6 +28,7 @@ public class Explosion {
         Main.appRoot.getChildren().add(centralFire);
 
 
+
         for (Block platform : Main.platforms) {
             if (leftFire.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                 fires.put(leftFire, false);

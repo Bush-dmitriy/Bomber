@@ -7,12 +7,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Main extends Application {
+
     private HashMap<KeyCode, Boolean> keys = new HashMap<>();
     public static ArrayList<Block> platforms = new ArrayList<>();
 
@@ -31,7 +30,8 @@ public class Main extends Application {
     boolean bombCount2 = true;
     boolean animationCount = true;
     boolean animationCount2 = true;
-    Explosion explosion;
+    boolean[] fires = {true,true,true,true,true};
+    public Explosion explosion;
 
     private void initContent() {
         ImageView backgroundIV = new ImageView(backgroundImage);
@@ -59,7 +59,7 @@ public class Main extends Application {
     }
 
     public void bombUpdate() {
-        if (isPressed(KeyCode.ENTER)) {
+        if (isPressed(KeyCode.CONTROL)) {
             if (bombCount) {
                 bomb = new Bomb((int) player.getTranslateX(), (int) player.getTranslateY());
                 bombCount = false;
@@ -81,19 +81,19 @@ public class Main extends Application {
                         explosion.rightFire.getBoundsInParent().intersects(player.getBoundsInParent())) {
                     appRoot.getChildren().remove(player);
                     appRoot.getChildren().clear();
-                    ImageView winner = new ImageView(backgroundImage2);
+                    ImageView winner = new ImageView(backgroundImage3);
                     winner.setFitHeight(330);
                     winner.setFitWidth(660);
                     appRoot.getChildren().add(winner);
                 }
-                if (explosion.lowerFire.getBoundsInParent().intersects(player.getBoundsInParent()) ||
+                if (explosion.lowerFire.getBoundsInParent().intersects(player2.getBoundsInParent()) ||
                         explosion.centralFire.getBoundsInParent().intersects(player2.getBoundsInParent()) ||
                         explosion.leftFire.getBoundsInParent().intersects(player2.getBoundsInParent()) ||
                         explosion.upperFire.getBoundsInParent().intersects(player2.getBoundsInParent()) ||
                         explosion.rightFire.getBoundsInParent().intersects(player2.getBoundsInParent())) {
                     appRoot.getChildren().remove(player2);
                     appRoot.getChildren().clear();
-                    ImageView winner = new ImageView(backgroundImage3);
+                    ImageView winner = new ImageView(backgroundImage2);
                     winner.setFitHeight(330);
                     winner.setFitWidth(660);
                     appRoot.getChildren().add(winner);
@@ -132,7 +132,7 @@ public class Main extends Application {
                         explosion.rightFire.getBoundsInParent().intersects(player.getBoundsInParent())) {
                     appRoot.getChildren().remove(player);
                     appRoot.getChildren().clear();
-                    ImageView winner = new ImageView(backgroundImage2);
+                    ImageView winner = new ImageView(backgroundImage3);
                     winner.setFitHeight(330);
                     winner.setFitWidth(660);
                     appRoot.getChildren().add(winner);
@@ -144,7 +144,7 @@ public class Main extends Application {
                         explosion.rightFire.getBoundsInParent().intersects(player2.getBoundsInParent())) {
                     appRoot.getChildren().remove(player2);
                     appRoot.getChildren().clear();
-                    ImageView winner = new ImageView(backgroundImage3);
+                    ImageView winner = new ImageView(backgroundImage2);
                     winner.setFitHeight(330);
                     winner.setFitWidth(660);
                     appRoot.getChildren().add(winner);
@@ -181,22 +181,22 @@ public class Main extends Application {
     }
 
     public void update2() {
-        if (isPressed(KeyCode.W)) {
+        if (isPressed(KeyCode.T)) {
             player2.animation.play();
             player2.animation.setOffsetX(60);
             player2.moveY(-3);
 
-        } else if (isPressed(KeyCode.S)) {
+        } else if (isPressed(KeyCode.G)) {
             player2.animation.play();
             player2.animation.setOffsetX(0);
             player2.moveY(3);
 
-        } else if (isPressed(KeyCode.D)) {
+        } else if (isPressed(KeyCode.H)) {
             player2.animation.play();
             player2.animation.setOffsetX(90);
             player2.moveX(3);
 
-        } else if (isPressed(KeyCode.A)) {
+        } else if (isPressed(KeyCode.F)) {
             player2.animation.play();
             player2.animation.setOffsetX(30);
             player2.moveX(-3);
@@ -204,6 +204,50 @@ public class Main extends Application {
             player2.animation.stop();
         }
     }
+
+    public void explosionUpdate() {
+        if (explosion != null && fires[0]) {
+            explosion.centralFire.animation.setOnFinished(event -> {
+                Main.appRoot.getChildren().remove(explosion.centralFire);
+                fires[0] = true;
+            });
+            fires[0] = false;
+            explosion.centralFire.animation.play();
+        }
+        if (explosion != null && fires[1]) {
+            explosion.leftFire.animation.setOnFinished(event -> {
+                Main.appRoot.getChildren().remove(explosion.leftFire);
+                fires[1] = true;
+            });
+            fires[1] = false;
+            explosion.leftFire.animation.play();
+        }
+        if (explosion != null && fires[2]) {
+            explosion.lowerFire.animation.setOnFinished(event -> {
+                Main.appRoot.getChildren().remove(explosion.lowerFire);
+                fires[2] = true;
+            });
+            fires[2] = false;
+            explosion.lowerFire.animation.play();
+        }
+        if (explosion != null && fires[3]) {
+            explosion.rightFire.animation.setOnFinished(event -> {
+                Main.appRoot.getChildren().remove(explosion.rightFire);
+                fires[3] = true;
+            });
+            fires[3] = false;
+            explosion.rightFire.animation.play();
+        }
+        if (explosion != null && fires[4]) {
+            explosion.upperFire.animation.setOnFinished(event -> {
+                Main.appRoot.getChildren().remove(explosion.upperFire);
+                fires[4] = true;
+            });
+            fires[4] = false;
+            explosion.upperFire.animation.play();
+        }
+    }
+
 
     public boolean isPressed(KeyCode key) {
         return keys.getOrDefault(key, false);
@@ -217,6 +261,7 @@ public class Main extends Application {
         player2.setTranslateX(570);
         player2.setTranslateY(270);
         Scene scene = new Scene(appRoot, 630, 330);
+        primaryStage.setResizable(false);
         scene.setOnKeyPressed(event -> keys.put(event.getCode(), true));
         scene.setOnKeyReleased(event -> {
             keys.put(event.getCode(), false);
@@ -231,6 +276,7 @@ public class Main extends Application {
                 bombUpdate2();
                 update();
                 update2();
+                explosionUpdate();
             }
         };
         timer.start();

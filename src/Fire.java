@@ -19,7 +19,7 @@ public class Fire extends Pane {
         setTranslateX(x);
         setTranslateY(y);
         fire.setViewport(new Rectangle2D(offsetX, offsetY, 14, 14));
-        animation = new ExplosionAnimation(this.fire, Duration.millis(800), offsetX, offsetY, 14, 14);
+        animation = new ExplosionAnimation(fire, Duration.millis(200), offsetX, offsetY, 14, 14);
         getChildren().add(fire);
     }
 
